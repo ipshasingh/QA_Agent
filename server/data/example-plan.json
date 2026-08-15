@@ -1,0 +1,36 @@
+const examplePlan = {
+  id: "QA-001",
+  version: 1,
+  status: "draft",
+
+  input: {
+    requirement: "",
+    acceptanceCriteria: [],
+    implementationSummary: ""
+  },
+
+  analysis: {
+    userFlows: [],
+    assumptions: [],
+    risks: [],
+    regressionAreas: []
+  },
+
+  tests: [],
+
+  coverage: {
+    totalCriteria: 0,
+    coveredCriteria: 0,
+    coveragePercentage: 0,
+    uncoveredCriteria: []
+  },
+
+  qualityIssues: {
+    duplicates: [],
+    incompleteTests: []
+  },
+
+  versions: []
+};
+
+module.exports = examplePlan;
