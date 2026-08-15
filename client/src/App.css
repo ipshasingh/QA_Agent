@@ -158,3 +158,148 @@
   color: #667085;
 }
 
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.summary-card {
+  padding: 22px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: white;
+}
+
+.summary-card span {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #667085;
+}
+
+.summary-card strong {
+  display: block;
+  font-size: 32px;
+  line-height: 1;
+}
+
+.summary-card p {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: #667085;
+}
+
+.criteria-section,
+.issues-section {
+  margin-top: 32px;
+}
+
+.criteria-section h3,
+.issues-section h3 {
+  margin-bottom: 14px;
+  font-size: 20px;
+}
+
+.criteria-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.criteria-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+  background: white;
+}
+
+.criteria-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 700;
+}
+
+.criteria-item.covered .criteria-icon {
+  background: #ecfdf3;
+  color: #027a48;
+}
+
+.criteria-item.uncovered .criteria-icon {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.criteria-status {
+  margin-left: auto;
+  font-size: 13px;
+  font-weight: 600;
+  color: #667085;
+}
+
+.no-issues {
+  padding: 16px;
+  border-radius: 9px;
+  background: #ecfdf3;
+  color: #027a48;
+  font-weight: 600;
+}
+
+.issue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.issue-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 16px;
+  border-radius: 9px;
+  border: 1px solid #e5e7eb;
+  background: white;
+}
+
+.issue-item strong {
+  text-transform: capitalize;
+  font-size: 14px;
+}
+
+.issue-item span {
+  font-size: 14px;
+  color: #667085;
+}
+
+.issue-item.high {
+  border-left: 4px solid #dc2626;
+}
+
+.issue-item.medium {
+  border-left: 4px solid #d97706;
+}
+
+.issue-item.low {
+  border-left: 4px solid #667085;
+}
+
+@media (max-width: 900px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}

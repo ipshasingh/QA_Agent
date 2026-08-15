@@ -165,17 +165,130 @@ AC-004: Authentication failure displays an error.`}
       </p>
     </div>
 
-    <div className="coverage-card">
-      <span>Acceptance Criteria Coverage</span>
+    <div className="summary-grid">
 
-      <strong>
-        {qaPlan.coverage?.coveragePercentage ?? 0}%
-      </strong>
+      <div className="summary-card coverage-card">
+        <span>Acceptance Criteria Coverage</span>
 
-      <p>
-        {qaPlan.coverage?.coveredCount ?? 0} of{" "}
-        {qaPlan.coverage?.totalCriteria ?? 0} criteria covered
-      </p>
+        <strong>
+          {qaPlan.coverage?.coveragePercentage ?? 0}%
+        </strong>
+
+        <p>
+          {qaPlan.coverage?.coveredCount ?? 0} of{" "}
+          {qaPlan.coverage?.totalCriteria ?? 0} criteria covered
+        </p>
+      </div>
+
+      <div className="summary-card">
+        <span>Incomplete Tests</span>
+
+        <strong>
+          {qaPlan.validation?.incompleteCount ?? 0}
+        </strong>
+
+        <p>
+          Tests missing required information
+        </p>
+      </div>
+
+      <div className="summary-card">
+        <span>Potential Duplicates</span>
+
+        <strong>
+          {qaPlan.duplicates?.duplicateCount ?? 0}
+        </strong>
+
+        <p>
+          Similar test cases detected
+        </p>
+      </div>
+
+      <div className="summary-card">
+        <span>Issues</span>
+
+        <strong>
+          {qaPlan.issues?.length ?? 0}
+        </strong>
+
+        <p>
+          Validation issues requiring review
+        </p>
+      </div>
+
+    </div>
+
+    <div className="criteria-section">
+      <h3>Acceptance Criteria</h3>
+
+      <div className="criteria-list">
+
+        {qaPlan.coverage?.coveredCriteria?.map(
+          (criteriaId) => (
+            <div
+              className="criteria-item covered"
+              key={criteriaId}
+            >
+              <span className="criteria-icon">
+                ✓
+              </span>
+
+              <span>{criteriaId}</span>
+
+              <span className="criteria-status">
+                Covered
+              </span>
+            </div>
+          )
+        )}
+
+        {qaPlan.coverage?.uncoveredCriteria?.map(
+          (criteriaId) => (
+            <div
+              className="criteria-item uncovered"
+              key={criteriaId}
+            >
+              <span className="criteria-icon">
+                !
+              </span>
+
+              <span>{criteriaId}</span>
+
+              <span className="criteria-status">
+                Uncovered
+              </span>
+            </div>
+          )
+        )}
+
+      </div>
+    </div>
+
+    <div className="issues-section">
+      <h3>Validation Results</h3>
+
+      {qaPlan.issues?.length === 0 ? (
+        <div className="no-issues">
+          ✓ No validation issues detected.
+        </div>
+      ) : (
+        <div className="issue-list">
+          {qaPlan.issues.map((issue, index) => (
+            <div
+              className={`issue-item ${issue.severity}`}
+              key={index}
+            >
+              <strong>
+                {issue.type.replaceAll("_", " ")}
+              </strong>
+
+              <span>
+                {issue.message}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   </section>
 )}

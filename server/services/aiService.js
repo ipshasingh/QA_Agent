@@ -7,6 +7,42 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
 });
 
+async function generateWithRetry(options, maxAttempts = 3) {
+  let lastError;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await ai.models.generateContent(options);
+    } catch (error) {
+      lastError = error;
+
+      const status = error.status;
+
+      const isTemporaryError =
+        status === 503 ||
+        status === 429;
+
+      if (!isTemporaryError || attempt === maxAttempts) {
+        throw error;
+      }
+
+      const delay = 1000 * Math.pow(2, attempt - 1);
+
+      console.log(
+        `Gemini temporarily unavailable (${status}). ` +
+        `Retrying in ${delay / 1000}s... ` +
+        `Attempt ${attempt + 1}/${maxAttempts}`
+      );
+
+      await new Promise((resolve) =>
+        setTimeout(resolve, delay)
+      );
+    }
+  }
+
+  throw lastError;
+}
+
 async function generateQAPlan({
   requirement,
   acceptanceCriteria,
@@ -183,17 +219,29 @@ The JSON must follow this structure:
 }
 `;
 
-  const response = await ai.models.generateContent({
-    model: "gemini-3.5-flash",
-    contents: prompt,
-    config: {
-      responseMimeType: "application/json"
-    }
-  });
+  const response = await generateWithRetry({
+  model: "gemini-3.5-flash",
+  contents: prompt,
+  config: {
+    responseMimeType: "application/json"
+  }
+});
 
   const text = response.text;
 
+console.log("RAW GEMINI RESPONSE:");
+console.log(text);
+
+try {
   return JSON.parse(text);
+} catch (parseError) {
+  console.error("GEMINI RETURNED INVALID JSON");
+  console.error(parseError.message);
+
+  throw new Error(
+    "Gemini returned invalid JSON. Please try generating the QA plan again."
+  );
+}
 }
 
 module.exports = {
