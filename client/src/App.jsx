@@ -10,6 +10,7 @@ function App() {
   const [error, setError] = useState("");
   const [qaPlan, setQaPlan] = useState(null);
   const [reviewedTests, setReviewedTests] = useState({});
+  const [editingTestId, setEditingTestId] = useState(null);
 
   const handleGenerate = async (event) => {
     event.preventDefault();
@@ -80,6 +81,51 @@ const handleReject = (testId) => {
     },
   }));
 };
+
+const handleEdit = (test) => {
+  setEditingTestId(test.id);
+
+  setReviewedTests((previous) => ({
+    ...previous,
+    [test.id]: {
+      ...previous[test.id],
+      editedTest: {
+        ...test,
+      },
+    },
+  }));
+};
+
+const handleCancelEdit = (testId) => {
+  setEditingTestId(null);
+
+  setReviewedTests((previous) => {
+    const next = { ...previous };
+    if (next[testId]) {
+      const { editedTest, ...rest } = next[testId];
+      next[testId] = rest;
+    }
+    return next;
+  });
+};
+
+const handleSaveEdit = (testId) => {
+  setEditingTestId(null);
+};
+
+const handleEditedFieldChange = (testId, field, value) => {
+  setReviewedTests((previous) => ({
+    ...previous,
+    [testId]: {
+      ...previous[testId],
+      editedTest: {
+        ...previous[testId]?.editedTest,
+        [field]: value,
+      },
+    },
+  }));
+};
+
   return (
     <div className="app">
       <header className="header">
@@ -406,126 +452,232 @@ AC-004: Authentication failure displays an error.`}
   </div>
 
   <div className="test-list">
-    {qaPlan.tests?.map((test) => (
-      <article
-        className="test-card"
-        key={test.id}
-      >
-        <div className="test-card-header">
-          <div>
-            <span className="test-id">
-              {test.id}
-            </span>
+    {qaPlan.tests?.map((test) => {
+      const review = reviewedTests[test.id] || {};
+      const displayTest = review.editedTest || test;
+      const isEditing = editingTestId === test.id;
+      const reviewStatus = review.status || "proposed";
 
-            <h4>{test.title}</h4>
-          </div>
+      return (
+        <article
+          className={`test-card ${reviewStatus}`}
+          key={test.id}
+        >
+          <div className="test-card-header">
+            <div>
+              <span className="test-id">{test.id}</span>
 
-          <span className="test-status">
-            {test.status || "proposed"}
-          </span>
-        </div>
-
-        <div className="test-meta">
-          <span className="test-type">
-            {test.type}
-          </span>
-
-          {test.framework && (
-            <span>
-              {test.framework}
-            </span>
-          )}
-
-          <span
-            className={`test-priority ${test.priority}`}
-          >
-            {test.priority}
-          </span>
-        </div>
-
-        {test.preconditions?.length > 0 && (
-          <div className="test-detail">
-            <h5>Preconditions</h5>
-
-            <ul>
-              {test.preconditions.map(
-                (condition, index) => (
-                  <li key={index}>
-                    {condition}
-                  </li>
-                )
+              {isEditing ? (
+                <input
+                  className="edit-input"
+                  value={displayTest.title || ""}
+                  onChange={(event) =>
+                    handleEditedFieldChange(
+                      test.id,
+                      "title",
+                      event.target.value
+                    )
+                  }
+                />
+              ) : (
+                <h4>{displayTest.title}</h4>
               )}
-            </ul>
+            </div>
+
+            <span className={`test-status ${reviewStatus}`}>
+              {reviewStatus}
+            </span>
           </div>
-        )}
 
-        <div className="test-detail">
-          <h5>Acceptance Criteria</h5>
+          <div className="test-meta">
+            <span className="test-type">
+              {displayTest.type}
+            </span>
 
-          <div className="criteria-tags">
-            {test.acceptanceCriteriaIds?.map(
-              (criteriaId) => (
-                <span
-                  className="criteria-tag"
-                  key={criteriaId}
-                >
-                  ✓ {criteriaId}
-                </span>
-              )
+            {displayTest.framework && (
+              <span>{displayTest.framework}</span>
+            )}
+
+            {isEditing ? (
+              <select
+                className="priority-select"
+                value={displayTest.priority || "medium"}
+                onChange={(event) =>
+                  handleEditedFieldChange(
+                    test.id,
+                    "priority",
+                    event.target.value
+                  )
+                }
+              >
+                <option value="critical">Critical</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            ) : (
+              <span
+                className={`test-priority ${displayTest.priority}`}
+              >
+                {displayTest.priority}
+              </span>
             )}
           </div>
-        </div>
 
-        <div className="review-controls">
-  <div className="review-status">
-    Review status:{" "}
-    <strong>
-      {reviewedTests[test.id]?.status || "proposed"}
-    </strong>
-  </div>
+          {displayTest.preconditions?.length > 0 && (
+            <div className="test-detail">
+              <h5>Preconditions</h5>
 
-  <div className="review-buttons">
-    <button
-      type="button"
-      className="approve-button"
-      onClick={() => handleApprove(test.id)}
-    >
-      Approve
-    </button>
+              <ul>
+                {displayTest.preconditions.map(
+                  (condition, index) => (
+                    <li key={index}>{condition}</li>
+                  )
+                )}
+              </ul>
+            </div>
+          )}
 
-    <button
-      type="button"
-      className="reject-button"
-      onClick={() => handleReject(test.id)}
-    >
-      Reject
-    </button>
-  </div>
-</div>
+          <div className="test-detail">
+            <h5>Acceptance Criteria</h5>
 
-        <div className="test-detail">
-          <h5>Steps</h5>
+            <div className="criteria-tags">
+              {displayTest.acceptanceCriteriaIds?.map(
+                (criteriaId) => (
+                  <span
+                    className="criteria-tag"
+                    key={criteriaId}
+                  >
+                    ✓ {criteriaId}
+                  </span>
+                )
+              )}
+            </div>
+          </div>
 
-          <ol>
-            {test.steps?.map((step, index) => (
-              <li key={index}>{step}</li>
-            ))}
-          </ol>
-        </div>
+          <div className="test-detail">
+            <h5>Steps</h5>
 
-        <div className="test-detail">
-          <h5>Expected Result</h5>
+            {isEditing ? (
+              <textarea
+                className="edit-textarea steps-editor"
+                value={displayTest.steps?.join("\n") || ""}
+                onChange={(event) =>
+                  handleEditedFieldChange(
+                    test.id,
+                    "steps",
+                    event.target.value.split("\n")
+                  )
+                }
+                placeholder="Enter one test step per line"
+              />
+            ) : (
+              <ol>
+                {displayTest.steps?.map((step, index) => (
+                  <li key={index}>{step}</li>
+                ))}
+              </ol>
+            )}
+          </div>
 
-          <p>{test.expectedResult}</p>
-        </div>
+          <div className="test-detail">
+            <h5>Expected Result</h5>
 
-        <div className="test-detail">
-          <h5>Why this test?</h5>
+            {isEditing ? (
+              <textarea
+                className="edit-textarea"
+                value={displayTest.expectedResult || ""}
+                onChange={(event) =>
+                  handleEditedFieldChange(
+                    test.id,
+                    "expectedResult",
+                    event.target.value
+                  )
+                }
+              />
+            ) : (
+              <p>{displayTest.expectedResult}</p>
+            )}
+          </div>
 
-          <p>{test.rationale}</p>
-        </div>
-      </article>
-    ))}
+          <div className="test-detail">
+            <h5>Why this test?</h5>
+
+            {isEditing ? (
+              <textarea
+                className="edit-textarea"
+                value={displayTest.rationale || ""}
+                onChange={(event) =>
+                  handleEditedFieldChange(
+                    test.id,
+                    "rationale",
+                    event.target.value
+                  )
+                }
+              />
+            ) : (
+              <p>{displayTest.rationale}</p>
+            )}
+          </div>
+
+          <div className="review-controls">
+            <div className="review-status">
+              Review status: <strong>{reviewStatus}</strong>
+            </div>
+
+            <div className="review-buttons">
+              {!isEditing && (
+                <button
+                  type="button"
+                  className="edit-button"
+                  onClick={() => handleEdit(test)}
+                >
+                  Edit
+                </button>
+              )}
+
+              {isEditing ? (
+                <>
+                  <button
+                    type="button"
+                    className="save-button"
+                    onClick={() => handleSaveEdit(test.id)}
+                  >
+                    Save Changes
+                  </button>
+
+                  <button
+                    type="button"
+                    className="cancel-button"
+                    onClick={() => handleCancelEdit(test.id)}
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="approve-button"
+                    onClick={() => handleApprove(test.id)}
+                  >
+                    Approve
+                  </button>
+
+                  <button
+                    type="button"
+                    className="reject-button"
+                    onClick={() => handleReject(test.id)}
+                  >
+                    Reject
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </article>
+      );
+    })}
   </div>
 </div>
     <div className="issues-section">

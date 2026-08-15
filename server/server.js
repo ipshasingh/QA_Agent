@@ -6,6 +6,10 @@ require("dotenv").config({
   path: path.join(__dirname, ".env"),
 });
 
+const {
+  createQAPlan,
+  getQAPlans
+} = require("./services/qaPlanService");
 const { generateQAPlan } = require("./services/aiService");
 const { validateQAPlan } = require("./utils/qaValidator");
 
@@ -93,6 +97,47 @@ function parseAcceptanceCriteria(acceptanceCriteria) {
     });
 }
 
+app.post("/api/qa-plans", (req, res) => {
+  try {
+    const plan = req.body;
+
+    if (!plan) {
+      return res.status(400).json({
+        error: "QA plan is required."
+      });
+    }
+
+    const savedPlan = createQAPlan(plan);
+
+    res.status(201).json({
+      message: "QA plan saved successfully.",
+      plan: savedPlan
+    });
+
+  } catch (error) {
+    console.error("Save QA plan error:", error);
+
+    res.status(500).json({
+      error: "Failed to save QA plan."
+    });
+  }
+});
+app.get("/api/qa-plans", (req, res) => {
+  try {
+    const plans = getQAPlans();
+
+    res.json({
+      plans
+    });
+
+  } catch (error) {
+    console.error("Get QA plans error:", error);
+
+    res.status(500).json({
+      error: "Failed to retrieve QA plans."
+    });
+  }
+});
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
