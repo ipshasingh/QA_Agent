@@ -8,6 +8,7 @@ function App() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [qaPlan, setQaPlan] = useState(null);
 
   const handleGenerate = async (event) => {
     event.preventDefault();
@@ -51,7 +52,7 @@ function App() {
 
       console.log("QA PLAN:", data);
 
-      alert("QA plan generated successfully!");
+      setQaPlan(data);
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -151,6 +152,33 @@ AC-004: Authentication failure displays an error.`}
               : "Generate QA Plan"}
           </button>
         </form>
+        {qaPlan && (
+  <section className="results-section">
+    <div className="results-header">
+      <p className="eyebrow">GENERATED QA PLAN</p>
+
+      <h2>QA Analysis Results</h2>
+
+      <p>
+        Review the proposed tests and validation results
+        before approving anything.
+      </p>
+    </div>
+
+    <div className="coverage-card">
+      <span>Acceptance Criteria Coverage</span>
+
+      <strong>
+        {qaPlan.coverage?.coveragePercentage ?? 0}%
+      </strong>
+
+      <p>
+        {qaPlan.coverage?.coveredCount ?? 0} of{" "}
+        {qaPlan.coverage?.totalCriteria ?? 0} criteria covered
+      </p>
+    </div>
+  </section>
+)}
       </main>
     </div>
   );
