@@ -8,8 +8,11 @@ require("dotenv").config({
 
 const {
   createQAPlan,
-  getQAPlans
+  createQAVersion,
+  getQAPlans,
+  getQAVersions
 } = require("./services/qaPlanService");
+
 const { generateQAPlan } = require("./services/aiService");
 const { validateQAPlan } = require("./utils/qaValidator");
 
@@ -135,6 +138,114 @@ app.get("/api/qa-plans", (req, res) => {
 
     res.status(500).json({
       error: "Failed to retrieve QA plans."
+    });
+  }
+});
+app.get("/api/qa-plans/latest", (req, res) => {
+  try {
+    const plans = getQAPlans();
+
+    if (!plans || plans.length === 0) {
+      return res.status(404).json({
+        error: "No saved QA plans found."
+      });
+    }
+
+    const latestPlan = [...plans].sort(
+      (a, b) => {
+        if (a.id === b.id) {
+          return Number(b.version) - Number(a.version);
+        }
+
+        return (
+          new Date(b.updatedAt || b.createdAt) -
+          new Date(a.updatedAt || a.createdAt)
+        );
+      }
+    )[0];
+
+    res.json({
+      plan: latestPlan
+    });
+
+  } catch (error) {
+    console.error(
+      "Load latest QA plan error:",
+      error
+    );
+
+    res.status(500).json({
+      error: "Failed to load saved QA plan."
+    });
+  }
+});
+app.post("/api/qa-plans/:id/versions", (req, res) => {
+  try {
+    const planId = req.params.id;
+    const updatedPlan = req.body;
+
+    if (!updatedPlan) {
+      return res.status(400).json({
+        error: "Updated QA plan is required."
+      });
+    }
+
+    const newVersion = createQAVersion(
+      planId,
+      updatedPlan
+    );
+
+    res.status(201).json({
+      message: "QA plan version created successfully.",
+      plan: newVersion
+    });
+
+  } catch (error) {
+    console.error(
+      "Create QA plan version error:",
+      error
+    );
+
+    if (
+      error.message.includes(
+        "was not found"
+      )
+    ) {
+      return res.status(404).json({
+        error: error.message
+      });
+    }
+
+    res.status(500).json({
+      error: "Failed to create QA plan version."
+    });
+  }
+});
+app.get("/api/qa-plans/:id/versions", (req, res) => {
+  try {
+    const versions = getQAVersions(
+      req.params.id
+    );
+
+    if (versions.length === 0) {
+      return res.status(404).json({
+        error: "QA plan not found."
+      });
+    }
+
+    res.json({
+      planId: req.params.id,
+      versions
+    });
+
+  } catch (error) {
+    console.error(
+      "Get QA plan versions error:",
+      error
+    );
+
+    res.status(500).json({
+      error: "Failed to retrieve QA plan versions."
     });
   }
 });

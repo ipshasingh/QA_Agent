@@ -17,6 +17,10 @@ function readPlans() {
     "utf-8"
   );
 
+  if (!data.trim()) {
+    return [];
+  }
+
   return JSON.parse(data);
 }
 
@@ -46,11 +50,67 @@ function createQAPlan(plan) {
   return newPlan;
 }
 
+function createQAVersion(planId, updatedPlan) {
+  const plans = readPlans();
+
+  const existingVersions = plans.filter(
+    (plan) => plan.id === planId
+  );
+
+  if (existingVersions.length === 0) {
+    throw new Error(
+      `QA plan ${planId} was not found.`
+    );
+  }
+
+  const latestVersion = Math.max(
+    ...existingVersions.map(
+      (plan) => Number(plan.version) || 1
+    )
+  );
+
+  const originalPlan = existingVersions[0];
+
+  const newVersion = {
+    ...updatedPlan,
+
+    id: planId,
+
+    version: latestVersion + 1,
+
+    createdAt:
+      originalPlan.createdAt,
+
+    updatedAt:
+      new Date().toISOString()
+  };
+
+  plans.push(newVersion);
+
+  savePlans(plans);
+
+  return newVersion;
+}
+
 function getQAPlans() {
   return readPlans();
 }
 
+function getQAVersions(planId) {
+  const plans = readPlans();
+
+  return plans
+    .filter((plan) => plan.id === planId)
+    .sort(
+      (a, b) =>
+        Number(b.version) -
+        Number(a.version)
+    );
+}
+
 module.exports = {
   createQAPlan,
-  getQAPlans
+  createQAVersion,
+  getQAPlans,
+  getQAVersions
 };

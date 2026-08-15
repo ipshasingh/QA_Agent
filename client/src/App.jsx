@@ -12,14 +12,22 @@ function App() {
   const [reviewedTests, setReviewedTests] = useState({});
   const [editingTestId, setEditingTestId] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [loadingSavedPlan, setLoadingSavedPlan] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
+  const [savedPlanId, setSavedPlanId] = useState(null);
+const [savedVersion, setSavedVersion] = useState(null);
+const [versions, setVersions] = useState([]);
+const [loadingVersions, setLoadingVersions] = useState(false);
   const handleGenerate = async (event) => {
     event.preventDefault();
 
     setError("");
     setSaveMessage("");
-
+    setSavedPlanId(null);
+    setSavedVersion(null);
+    setReviewedTests({});
+    setEditingTestId(null);
     if (
       !requirement.trim() ||
       !acceptanceCriteria.trim() ||
@@ -115,6 +123,10 @@ const handleEditedFieldChange = (testId, field, value) => {
   }));
 };
 
+const handleSaveEdit = (testId) => {
+  setEditingTestId(null);
+};
+
 const buildReviewedPlan = () => ({
   ...qaPlan,
   requirement,
@@ -135,28 +147,48 @@ const buildReviewedPlan = () => ({
 });
 
 const handleSavePlan = async () => {
-  if (!qaPlan) return;
+  if (!qaPlan) {
+    return;
+  }
 
   setError("");
   setSaveMessage("");
   setSaving(true);
 
   try {
-    const response = await fetch("http://localhost:5000/api/qa-plans", {
+    const reviewedPlan = buildReviewedPlan();
+
+    const isExistingPlan = Boolean(savedPlanId);
+
+    const url = isExistingPlan
+      ? `http://localhost:5000/api/qa-plans/${savedPlanId}/versions`
+      : "http://localhost:5000/api/qa-plans";
+
+    const response = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(buildReviewedPlan()),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reviewedPlan),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "Failed to save QA plan.");
+      throw new Error(
+        data.error || "Failed to save QA plan."
+      );
     }
 
+    const savedPlan = data.plan;
+
+    setSavedPlanId(savedPlan.id);
+    setSavedVersion(savedPlan.version);
+
     setSaveMessage(
-      `QA plan saved successfully as ${data.plan.id}, version ${data.plan.version}.`
+      `QA plan saved successfully as ${savedPlan.id}, version ${savedPlan.version}.`
     );
+
   } catch (err) {
     console.error(err);
     setError(err.message);
@@ -164,7 +196,83 @@ const handleSavePlan = async () => {
     setSaving(false);
   }
 };
+const handleLoadLatestPlan = async () => {
+  setError("");
+  setSaveMessage("");
+  setLoadingSavedPlan(true);
 
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/qa-plans/latest"
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Failed to load saved QA plan."
+      );
+    }
+
+    const plan = data.plan;
+
+    setQaPlan(plan);
+
+    setSavedPlanId(plan.id);
+    setSavedVersion(plan.version);
+
+    const restoredReviews = {};
+
+    (plan.tests || []).forEach((test) => {
+      if (test.status && test.status !== "proposed") {
+        restoredReviews[test.id] = {
+          status: test.status
+        };
+      }
+    });
+
+    setReviewedTests(restoredReviews);
+
+    setSaveMessage(
+      `Loaded ${plan.id}, version ${plan.version}.`
+    );
+
+  } catch (err) {
+    console.error(err);
+    setError(err.message);
+  } finally {
+    setLoadingSavedPlan(false);
+  }
+};
+const handleLoadVersionHistory = async () => {
+  if (!savedPlanId) {
+    return;
+  }
+
+  setLoadingVersions(true);
+  setError("");
+
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/qa-plans/${savedPlanId}/versions`
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "Failed to load version history."
+      );
+    }
+
+    setVersions(data.versions || []);
+  } catch (err) {
+    console.error(err);
+    setError(err.message);
+  } finally {
+    setLoadingVersions(false);
+  }
+};
   return (
     <div className="app">
       <header className="header">
@@ -261,6 +369,16 @@ AC-004: Authentication failure displays an error.`}
               ? "Generating QA Plan..."
               : "Generate QA Plan"}
           </button>
+          <button
+  type="button"
+  className="load-plan-button"
+  onClick={handleLoadLatestPlan}
+  disabled={loadingSavedPlan}
+>
+  {loadingSavedPlan
+    ? "Loading Saved Plan..."
+    : "Load Latest Saved Plan"}
+</button>
         </form>
         {qaPlan && (
   <section className="results-section">
@@ -536,7 +654,7 @@ AC-004: Authentication failure displays an error.`}
           <span
             className={`test-priority ${displayTest.priority}`}
           >
-            {test.priority}
+            {displayTest.priority}
           </span>
         </div>
 
@@ -710,46 +828,124 @@ AC-004: Authentication failure displays an error.`}
   </div>
 </div>
     <div className="save-plan-section">
-      <div>
-        <h3>Save Reviewed QA Plan</h3>
-        <p>Save the current human-reviewed version of this QA plan.</p>
-      </div>
-      <button
-        type="button"
-        className="save-plan-button"
-        onClick={handleSavePlan}
-        disabled={saving}
-      >
-        {saving ? "Saving QA Plan..." : "Save QA Plan"}
-      </button>
+  <div>
+    <h3>Save Reviewed QA Plan</h3>
+
+    <p>
+      Save the current human-reviewed version of this QA plan.
+    </p>
+
+    {savedPlanId && (
+      <p className="saved-version">
+        Current saved version:{" "}
+        <strong>v{savedVersion}</strong>
+        {" "}·{" "}
+        <strong>{savedPlanId}</strong>
+      </p>
+    )}
+  </div>
+
+  <div className="version-history-section">
+  <div className="version-history-header">
+    <div>
+      <h3>Version History</h3>
+      <p>
+        Previously saved versions of this reviewed QA plan.
+      </p>
     </div>
+
+    <button
+      type="button"
+      className="load-history-button"
+      onClick={handleLoadVersionHistory}
+      disabled={!savedPlanId || loadingVersions}
+    >
+      {loadingVersions
+        ? "Loading..."
+        : "Load Version History"}
+    </button>
+  </div>
+
+  {versions.length > 0 && (
+    <div className="version-list">
+      {versions.map((version) => (
+        <div
+          className={`version-item ${
+            version.version === savedVersion
+              ? "current-version"
+              : ""
+          }`}
+          key={`${version.id}-${version.version}`}
+        >
+          <div>
+            <strong>
+              Version {version.version}
+            </strong>
+
+            {version.version === savedVersion && (
+              <span className="current-version-label">
+                Current
+              </span>
+            )}
+          </div>
+
+          <span>
+            {new Date(
+              version.updatedAt || version.createdAt
+            ).toLocaleString()}
+          </span>
+        </div>
+      ))}
+    </div>
+  )}
+
+  {savedPlanId && versions.length === 0 && (
+    <p className="empty-state">
+      Click "Load Version History" to see saved versions.
+    </p>
+  )}
+</div>
+
+  <button
+    type="button"
+    className="save-plan-button"
+    onClick={handleSavePlan}
+    disabled={saving}
+  >
+    {saving
+      ? "Saving QA Plan..."
+      : savedPlanId
+        ? "Save New Version"
+        : "Save QA Plan"}
+  </button>
+</div>
 
     <div className="issues-section">
-      <h3>Validation Results</h3>
+  <h3>Validation Results</h3>
 
-      {qaPlan.issues?.length === 0 ? (
-        <div className="no-issues">
-          ✓ No validation issues detected.
-        </div>
-      ) : (
-        <div className="issue-list">
-          {qaPlan.issues.map((issue, index) => (
-            <div
-              className={`issue-item ${issue.severity}`}
-              key={index}
-            >
-              <strong>
-                {issue.type.replaceAll("_", " ")}
-              </strong>
-
-              <span>
-                {issue.message}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
+  {(qaPlan.issues ?? []).length === 0 ? (
+    <div className="no-issues">
+      ✓ No validation issues detected.
     </div>
+  ) : (
+    <div className="issue-list">
+      {(qaPlan.issues ?? []).map((issue, index) => (
+        <div
+          className={`issue-item ${issue.severity || "medium"}`}
+          key={index}
+        >
+          <strong>
+            {(issue.type || "issue").replaceAll("_", " ")}
+          </strong>
+
+          <span>
+            {issue.message || "Validation issue detected."}
+          </span>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
   </section>
 )}
       </main>

@@ -1,1 +1,147 @@
-[]
+[
+  {
+    "id": "QA-1786800644139",
+    "version": 1,
+    "createdAt": "2026-08-15T13:30:44.139Z",
+    "updatedAt": "2026-08-15T13:30:44.139Z",
+    "implementationSummary": "Implemented password reset flow with secure tokens, email delivery, expiration, validation and password update.",
+    "requirement": "User can reset a forgotten password using their registered email address.",
+    "review": {
+      "reviewed": true,
+      "reviewedAt": "2026-08-15T13:30:24.7434312Z"
+    },
+    "tests": [
+      {
+        "framework": "Jest / Supertest",
+        "steps": [
+          "Send a password reset request using the registered email."
+        ],
+        "id": "TC-001",
+        "type": "api",
+        "preconditions": [
+          "A registered user exists."
+        ],
+        "status": "approved",
+        "rationale": "Verifies the primary password reset request flow.",
+        "expectedResult": "The request succeeds and a password reset email is generated.",
+        "acceptanceCriteriaIds": [
+          "AC-001",
+          "AC-002"
+        ],
+        "title": "Request password reset with registered email",
+        "priority": "high"
+      },
+      {
+        "framework": "Jest / Supertest",
+        "steps": [
+          "Submit the expired token."
+        ],
+        "id": "TC-002",
+        "type": "api",
+        "preconditions": [
+          "A reset token older than 30 minutes exists."
+        ],
+        "status": "approved",
+        "rationale": "Verifies token expiration and failure handling.",
+        "expectedResult": "The server rejects the token and does not change the password.",
+        "acceptanceCriteriaIds": [
+          "AC-003",
+          "AC-005"
+        ],
+        "title": "Reject expired password reset token",
+        "priority": "critical"
+      }
+    ],
+    "acceptanceCriteria": [
+      "AC-001: User can request a password reset.",
+      "AC-002: Registered users receive a reset email.",
+      "AC-003: Reset links expire after 30 minutes.",
+      "AC-004: User can set a valid new password.",
+      "AC-005: Invalid or expired tokens are rejected.",
+      "AC-006: Unknown emails receive a generic response.",
+      "AC-007: User can log in with the new password."
+    ]
+  },
+  {
+    "implementationSummary": "Updated password reset flow with additional security validation.",
+    "requirement": "User can reset a forgotten password using their registered email address.",
+    "review": {
+      "reviewed": true,
+      "reviewedAt": "2026-08-15T13:34:12.3547385Z"
+    },
+    "tests": [
+      {
+        "framework": "Jest / Supertest",
+        "steps": [
+          "Submit a password reset request using the registered email."
+        ],
+        "id": "TC-001",
+        "type": "api",
+        "preconditions": [
+          "A registered user exists."
+        ],
+        "status": "approved",
+        "rationale": "Verifies the primary password reset request flow.",
+        "expectedResult": "The request succeeds and a reset email is generated.",
+        "acceptanceCriteriaIds": [
+          "AC-001",
+          "AC-002"
+        ],
+        "title": "Request password reset with registered email",
+        "priority": "high"
+      },
+      {
+        "framework": "Jest / Supertest",
+        "steps": [
+          "Submit the expired reset token."
+        ],
+        "id": "TC-002",
+        "type": "api",
+        "preconditions": [
+          "An expired reset token exists."
+        ],
+        "status": "approved",
+        "rationale": "Verifies token expiration and failure handling.",
+        "expectedResult": "The server rejects the token and does not change the password.",
+        "acceptanceCriteriaIds": [
+          "AC-003",
+          "AC-005"
+        ],
+        "title": "Reject expired password reset token",
+        "priority": "critical"
+      },
+      {
+        "framework": "Jest / Supertest",
+        "steps": [
+          "Submit a password reset request using an unknown email."
+        ],
+        "id": "TC-003",
+        "type": "api",
+        "preconditions": [
+          "No account exists for the submitted email."
+        ],
+        "status": "proposed",
+        "rationale": "Verifies protection against account enumeration.",
+        "expectedResult": "The response does not reveal whether an account exists.",
+        "acceptanceCriteriaIds": [
+          "AC-006"
+        ],
+        "title": "Prevent account enumeration through password reset",
+        "priority": "critical"
+      }
+    ],
+    "acceptanceCriteria": [
+      "AC-001: User can request a password reset.",
+      "AC-002: Registered users receive a reset email.",
+      "AC-003: Reset links expire after 30 minutes.",
+      "AC-004: User can set a valid new password.",
+      "AC-005: Invalid or expired tokens are rejected.",
+      "AC-006: Unknown emails receive a generic response.",
+      "AC-007: User can log in with the new password."
+    ],
+    "id": "QA-1786800644139",
+    "version": 2,
+    "createdAt": "2026-08-15T13:30:44.139Z",
+    "updatedAt": "2026-08-15T13:36:56.339Z"
+  }
+]
