@@ -1,17 +1,18 @@
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+const path = require("path");
 
-const { GoogleGenAI } = require("@google/genai");
+require("dotenv").config({
+  path: path.join(__dirname, ".env"),
+});
+
+const { generateQAPlan } = require("./services/aiService");
+const { validateQAPlan } = require("./utils/qaValidator");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
 
 app.get("/", (req, res) => {
   res.json({
@@ -19,26 +20,78 @@ app.get("/", (req, res) => {
   });
 });
 
-app.post("/api/test-ai", async (req, res) => {
+app.post("/api/qa-plan", async (req, res) => {
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3.6-flash",
-      contents: "Explain what a software test case is in one sentence.",
+    const {
+      requirement,
+      acceptanceCriteria,
+      implementationSummary,
+    } = req.body;
+
+    if (!requirement || !acceptanceCriteria || !implementationSummary) {
+      return res.status(400).json({
+        error:
+          "Requirement, acceptance criteria and implementation summary are required.",
+      });
+    }
+
+    const qaPlan = await generateQAPlan({
+      requirement,
+      acceptanceCriteria,
+      implementationSummary,
     });
 
-    res.json({
-      result: response.text,
-    });
+    const validation = validateQAPlan(
+      parseAcceptanceCriteria(acceptanceCriteria),
+      qaPlan.tests || []
+    );
+
+    const finalPlan = {
+      ...qaPlan,
+      coverage: validation.coverage,
+      validation: validation.validation,
+      duplicates: validation.duplicates,
+      issues: validation.issues,
+    };
+
+    res.json(finalPlan);
   } catch (error) {
-    console.error("Gemini error:");
+    console.error("QA plan generation error:");
     console.error("Status:", error.status);
     console.error("Message:", error.message);
 
     res.status(500).json({
-      error: error.message || "Failed to connect to Gemini",
+      error:
+        error.message || "Failed to generate QA plan.",
     });
   }
 });
+
+function parseAcceptanceCriteria(acceptanceCriteria) {
+  if (Array.isArray(acceptanceCriteria)) {
+    return acceptanceCriteria;
+  }
+
+  return acceptanceCriteria
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const match = line.match(/^(AC-\d+)\s*:\s*(.*)$/);
+
+      if (match) {
+        return {
+          id: match[1],
+          text: match[2],
+        };
+      }
+
+      return {
+        id: `AC-${Math.random().toString(36).slice(2, 8)}`,
+        text: line,
+      };
+    });
+}
 
 const PORT = process.env.PORT || 5000;
 
