@@ -1,5 +1,7 @@
 import { useState } from "react";
 import "./App.css";
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function App() {
   const [requirement, setRequirement] = useState("");
@@ -41,7 +43,7 @@ const [loadingVersions, setLoadingVersions] = useState(false);
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/qa-plan",
+        `${API_URL}/api/qa-plan`,
         {
           method: "POST",
           headers: {
@@ -161,8 +163,8 @@ const handleSavePlan = async () => {
     const isExistingPlan = Boolean(savedPlanId);
 
     const url = isExistingPlan
-      ? `http://localhost:5000/api/qa-plans/${savedPlanId}/versions`
-      : "http://localhost:5000/api/qa-plans";
+      ? `${API_URL}/api/qa-plans/${savedPlanId}/versions`
+      : `${API_URL}/api/qa-plans`;
 
     const response = await fetch(url, {
       method: "POST",
@@ -203,7 +205,7 @@ const handleLoadLatestPlan = async () => {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/qa-plans/latest"
+      `${API_URL}/api/qa-plans/latest`
     );
 
     const data = await response.json();
@@ -254,7 +256,7 @@ const handleLoadVersionHistory = async () => {
 
   try {
     const response = await fetch(
-      `http://localhost:5000/api/qa-plans/${savedPlanId}/versions`
+      `${API_URL}/api/qa-plans/${savedPlanId}/versions`
     );
 
     const data = await response.json();
