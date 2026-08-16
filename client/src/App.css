@@ -53,6 +53,7 @@
   font-weight: 700;
 }
 
+/*Responsive interactive elements*/
 .form-section textarea {
   width: 100%;
   box-sizing: border-box;
@@ -113,6 +114,7 @@
   font-size: 14px;
 }
 
+/*additional negative space*/
 .results-section {
   margin-top: 60px;
   padding-top: 40px;
@@ -165,6 +167,7 @@
   margin-bottom: 32px;
 }
 
+/*summary cards*/
 .summary-card {
   padding: 22px;
   border: 1px solid #e5e7eb;
@@ -292,6 +295,7 @@
   border-left: 4px solid #667085;
 }
 
+/*responsive*/
 @media (max-width: 900px) {
   .summary-grid {
     grid-template-columns: repeat(2, 1fr);

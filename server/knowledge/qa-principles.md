@@ -1,40 +1,45 @@
-# QA Principles
+QA Principles
 
-## Positive Testing
+Positive Testing
+----------------
+Verify that valid inputs and expected user behavior produce the intended outcome.
 
-Verify that valid inputs and expected user behavior
-produce the intended outcome.
+Negative Testing
+----------------
+Verify that invalid, unexpected or malformed inputs are handled safely and predictably.
 
-## Negative Testing
-
-Verify that invalid, unexpected or malformed inputs
-are handled safely and predictably.
-
-## Boundary Testing
-
+Boundary Testing
+----------------
 Test values at and around important boundaries.
 
-## Permission Testing
+Permission Testing
+------------------
+Verify that users can access only functionality and resources they are authorized to access.Test both authorized and unauthorized scenarios.
 
-Verify that users can access only functionality
-and resources they are authorized to access.
+Failure Testing
+---------------
+Consider failures such as network errors, unavailable services, invalid responses, timeouts and dependency failures.
 
-Test both authorized and unauthorized scenarios.
+Regression Testing
+------------------
+When an existing component or shared service changes, identify existing functionality that may have been affected by the change.
 
-## Failure Testing
+Test Independence
+-----------------
+Tests should have clear setup, actions and expected results and should avoid unnecessary dependence on other tests.
 
-Consider failures such as network errors, unavailable
-services, invalid responses, timeouts and dependency
-failures.
+Functional Testing
+------------------
+Verify that each feature works according to requirements. 
 
-## Regression Testing
+Unit testing
+------------
+Examine individual components or functions for expected behavior.
 
-When an existing component or shared service changes,
-identify existing functionality that may have been
-affected by the change.
+Integration testing
+-------------------
+Test how different components of the application interact for compatibility
 
-## Test Independence
-
-Tests should have clear setup, actions and expected
-results and should avoid unnecessary dependence
-on other tests.
+Usability testing
+-----------------
+Evaluate the user experience by observing real users interacting with the software

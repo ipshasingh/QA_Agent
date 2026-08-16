@@ -143,5 +143,677 @@
     "version": 2,
     "createdAt": "2026-08-15T13:30:44.139Z",
     "updatedAt": "2026-08-15T13:36:56.339Z"
+  },
+  {
+    "implementationSummary": "",
+    "requirement": "",
+    "review": {
+      "reviewed": true,
+      "reviewedAt": "2026-08-16T03:11:01.666Z"
+    },
+    "tests": [
+      {
+        "framework": "Jest / Supertest",
+        "steps": [
+          "Submit a password reset request using the registered email."
+        ],
+        "id": "TC-001",
+        "type": "api",
+        "preconditions": [
+          "A registered user exists."
+        ],
+        "status": "approved",
+        "rationale": "Verifies the primary password reset request flow.",
+        "expectedResult": "The request succeeds and a reset email is generated.",
+        "acceptanceCriteriaIds": [
+          "AC-001",
+          "AC-002"
+        ],
+        "title": "Request password reset with registered email",
+        "priority": "critical"
+      },
+      {
+        "framework": "Jest / Supertest",
+        "steps": [
+          "Submit the expired reset token."
+        ],
+        "id": "TC-002",
+        "type": "api",
+        "preconditions": [
+          "An expired reset token exists."
+        ],
+        "status": "approved",
+        "rationale": "Verifies token expiration and failure handling.",
+        "expectedResult": "The server rejects the token and does not change the password.",
+        "acceptanceCriteriaIds": [
+          "AC-003",
+          "AC-005"
+        ],
+        "title": "Reject expired password reset token",
+        "priority": "critical"
+      },
+      {
+        "framework": "Jest / Supertest",
+        "steps": [
+          "Submit a password reset request using an unknown email."
+        ],
+        "id": "TC-003",
+        "type": "api",
+        "preconditions": [
+          "No account exists for the submitted email."
+        ],
+        "status": "proposed",
+        "rationale": "Verifies protection against account enumeration.",
+        "expectedResult": "The response does not reveal whether an account exists.",
+        "acceptanceCriteriaIds": [
+          "AC-006"
+        ],
+        "title": "Prevent account enumeration through password reset",
+        "priority": "critical"
+      }
+    ],
+    "acceptanceCriteria": "",
+    "id": "QA-1786800644139",
+    "version": 3,
+    "createdAt": "2026-08-15T13:30:44.139Z",
+    "updatedAt": "2026-08-16T03:11:01.744Z"
+  },
+  {
+    "id": "QA-1786853732256",
+    "version": 1,
+    "createdAt": "2026-08-16T04:15:32.256Z",
+    "updatedAt": "2026-08-16T04:15:32.256Z",
+    "analysis": {
+      "userFlows": [
+        {
+          "id": "FLOW-001",
+          "name": "Trigger Feature A",
+          "description": "The user attempts to access and interact with the newly implemented Feature A."
+        }
+      ],
+      "assumptions": [
+        {
+          "text": "The input 'A' is a placeholder for a feature that is yet to be fully specified.",
+          "impact": "We cannot write concrete functional test cases because we don't know what 'A' actually does, what inputs it expects, or what outcomes it should produce."
+        }
+      ],
+      "risks": [
+        {
+          "area": "Requirements Ambiguity",
+          "level": "critical",
+          "reason": "The requirement, acceptance criteria, and implementation summary are all 'A'. Building or testing anything based on this will almost certainly result in the wrong behavior being shipped."
+        }
+      ],
+      "regressionAreas": [
+        "Existing core application stability (to ensure whatever 'A' is, it doesn't break the main loop)."
+      ]
+    },
+    "tests": [
+      {
+        "id": "TC-001",
+        "title": "Basic sanity check for Feature A placeholder",
+        "type": "manual",
+        "framework": null,
+        "priority": "high",
+        "preconditions": [
+          "The application is built and running in the staging environment."
+        ],
+        "steps": [
+          "Identify where 'A' was implemented in the codebase or UI.",
+          "Attempt to load or trigger 'A'.",
+          "Observe if the application crashes or throws uncaught console errors."
+        ],
+        "expectedResult": "The application remains stable and does not throw errors when 'A' is accessed.",
+        "acceptanceCriteriaIds": [
+          "A"
+        ],
+        "rationale": "With zero requirements, our only realistic test is to make sure this new code doesn't actively break the rest of the app.",
+        "status": "proposed"
+      }
+    ],
+    "qualityIssues": {
+      "duplicates": [],
+      "incompleteTests": [
+        {
+          "testId": "TC-001",
+          "reason": "The test steps and expected results are completely generic because the requirement 'A' provides no business logic to assert against."
+        }
+      ]
+    },
+    "coverage": {
+      "totalCriteria": 1,
+      "coveredCount": 0,
+      "uncoveredCount": 1,
+      "coveragePercentage": 0,
+      "coveredCriteria": [],
+      "uncoveredCriteria": [
+        "AC-5hy94h"
+      ],
+      "invalidMappings": [
+        {
+          "testId": "TC-001",
+          "acceptanceCriteriaId": "A"
+        }
+      ]
+    },
+    "validation": {
+      "incompleteTests": [],
+      "incompleteCount": 0
+    },
+    "duplicates": {
+      "duplicates": [],
+      "duplicateCount": 0
+    },
+    "issues": [
+      {
+        "type": "uncovered_criteria",
+        "severity": "high",
+        "message": "AC-5hy94h has no proposed test."
+      },
+      {
+        "type": "invalid_mapping",
+        "severity": "medium",
+        "message": "TC-001 references non-existent A."
+      }
+    ],
+    "requirement": "A",
+    "acceptanceCriteria": "A",
+    "implementationSummary": "A",
+    "review": {
+      "reviewed": true,
+      "reviewedAt": "2026-08-16T04:15:32.235Z"
+    }
+  },
+  {
+    "analysis": {
+      "userFlows": [
+        {
+          "id": "FLOW-001",
+          "name": "Trigger Feature A",
+          "description": "The user attempts to access and interact with the newly implemented Feature A."
+        }
+      ],
+      "assumptions": [
+        {
+          "text": "The input 'A' is a placeholder for a feature that is yet to be fully specified.",
+          "impact": "We cannot write concrete functional test cases because we don't know what 'A' actually does, what inputs it expects, or what outcomes it should produce."
+        }
+      ],
+      "risks": [
+        {
+          "area": "Requirements Ambiguity",
+          "level": "critical",
+          "reason": "The requirement, acceptance criteria, and implementation summary are all 'A'. Building or testing anything based on this will almost certainly result in the wrong behavior being shipped."
+        }
+      ],
+      "regressionAreas": [
+        "Existing core application stability (to ensure whatever 'A' is, it doesn't break the main loop)."
+      ]
+    },
+    "tests": [
+      {
+        "id": "TC-001",
+        "title": "Basic sanity check for Feature A placeholder",
+        "type": "manual",
+        "framework": null,
+        "priority": "low",
+        "preconditions": [
+          "The application is built and running in the staging environment."
+        ],
+        "steps": [
+          "Identify where 'A' was implemented in the codebase or UI.",
+          "Attempt to load or trigger 'A'.",
+          "Observe if the application crashes or throws uncaught console errors."
+        ],
+        "expectedResult": "The application remains stable and does not throw errors when 'A' is accessed.",
+        "acceptanceCriteriaIds": [
+          "A"
+        ],
+        "rationale": "With zero requirements, our only realistic test is to make sure this new code doesn't actively break the rest of the app.",
+        "status": "proposed"
+      }
+    ],
+    "qualityIssues": {
+      "duplicates": [],
+      "incompleteTests": [
+        {
+          "testId": "TC-001",
+          "reason": "The test steps and expected results are completely generic because the requirement 'A' provides no business logic to assert against."
+        }
+      ]
+    },
+    "coverage": {
+      "totalCriteria": 1,
+      "coveredCount": 0,
+      "uncoveredCount": 1,
+      "coveragePercentage": 0,
+      "coveredCriteria": [],
+      "uncoveredCriteria": [
+        "AC-5hy94h"
+      ],
+      "invalidMappings": [
+        {
+          "testId": "TC-001",
+          "acceptanceCriteriaId": "A"
+        }
+      ]
+    },
+    "validation": {
+      "incompleteTests": [],
+      "incompleteCount": 0
+    },
+    "duplicates": {
+      "duplicates": [],
+      "duplicateCount": 0
+    },
+    "issues": [
+      {
+        "type": "uncovered_criteria",
+        "severity": "high",
+        "message": "AC-5hy94h has no proposed test."
+      },
+      {
+        "type": "invalid_mapping",
+        "severity": "medium",
+        "message": "TC-001 references non-existent A."
+      }
+    ],
+    "requirement": "A",
+    "acceptanceCriteria": "A",
+    "implementationSummary": "A",
+    "review": {
+      "reviewed": true,
+      "reviewedAt": "2026-08-16T04:15:56.115Z"
+    },
+    "id": "QA-1786853732256",
+    "version": 2,
+    "createdAt": "2026-08-16T04:15:32.256Z",
+    "updatedAt": "2026-08-16T04:15:56.132Z"
+  },
+  {
+    "id": "QA-1786859244747",
+    "version": 1,
+    "createdAt": "2026-08-16T05:47:24.747Z",
+    "updatedAt": "2026-08-16T05:47:24.748Z",
+    "analysis": {
+      "userFlows": [
+        {
+          "id": "FLOW-001",
+          "name": "Google Login Happy Path",
+          "description": "An existing registered user logs in via Google and is redirected to the dashboard."
+        },
+        {
+          "id": "FLOW-002",
+          "name": "Failed Google Authentication",
+          "description": "A user attempts to log in but Google returns an error or authentication fails, redirecting the user back with an error message."
+        }
+      ],
+      "assumptions": [
+        {
+          "text": "We match Google accounts to existing app accounts using the email address returned by Google.",
+          "impact": "If our database matches solely on the email string without verifying that Google has actually validated that email address, we open up a critical account takeover vulnerability."
+        },
+        {
+          "text": "Unregistered users trying to log in with Google should be blocked or shown an error rather than having an account auto-created.",
+          "impact": "The requirements specifically state 'As a registered user'. If we automatically create accounts for any Google login, we're violating the current scope and altering our user acquisition metrics."
+        }
+      ],
+      "risks": [
+        {
+          "area": "Account Takeover / Verification",
+          "level": "critical",
+          "reason": "If Google returns 'email_verified: false' in the payload and we still log the user in, anyone can register a dummy Google account with a target's email and hijack their account in our system."
+        },
+        {
+          "area": "CSRF / State Handling",
+          "level": "high",
+          "reason": "If we don't validate the 'state' parameter in the OAuth callback, users are vulnerable to login CSRF attacks where an attacker forces a victim to log into the attacker's account."
+        },
+        {
+          "area": "Third-Party Dependency Failure",
+          "level": "medium",
+          "reason": "If Google's authorization servers are down or slow, our application could hang or show unhelpful raw error dumps to the user."
+        }
+      ],
+      "regressionAreas": [
+        "Standard email/password login flow",
+        "User logout mechanism",
+        "Session expiration and renewal"
+      ]
+    },
+    "tests": [
+      {
+        "id": "TC-001",
+        "title": "Successful login with existing verified email matches account and redirects to dashboard",
+        "type": "playwright",
+        "framework": "Playwright",
+        "priority": "medium",
+        "preconditions": [
+          "A user exists in our database with email 'testuser@gmail.com'.",
+          "Google OAuth sandbox environment is configured."
+        ],
+        "steps": [
+          "Navigate to the login page.",
+          "Click the 'Log in with Google' button.",
+          "Authenticate using the mock Google account 'testuser@gmail.com'.",
+          "Allow redirects to complete."
+        ],
+        "expectedResult": "The user is successfully authenticated, a session is created, and they land on the '/dashboard' route.",
+        "acceptanceCriteriaIds": [
+          "AC-001",
+          "AC-002",
+          "AC-003"
+        ],
+        "rationale": "This is the primary happy path. We need to verify that we successfully link the incoming Google email with our existing record and create a valid local session.",
+        "status": "approved"
+      },
+      {
+        "id": "TC-002",
+        "title": "Reject login if Google email is not verified",
+        "type": "api",
+        "framework": "Vitest / Supertest",
+        "priority": "critical",
+        "preconditions": [
+          "A user exists in our database with email 'unverified@gmail.com'."
+        ],
+        "steps": [
+          "Mock a Google token response containing 'email': 'unverified@gmail.com' and 'email_verified': false.",
+          "Send this token payload to our OAuth callback endpoint."
+        ],
+        "expectedResult": "The server rejects the authentication attempt, does not establish a session, and returns a 401 Unauthorized status with a clear error payload.",
+        "acceptanceCriteriaIds": [
+          "AC-004"
+        ],
+        "rationale": "If we don't check the 'email_verified' flag from Google, anyone can create a free Google account with our users' emails and bypass password security to hijack accounts.",
+        "status": "proposed"
+      },
+      {
+        "id": "TC-003",
+        "title": "OAuth callback rejects request with missing or mismatched state parameter",
+        "type": "api",
+        "framework": "Vitest / Supertest",
+        "priority": "high",
+        "preconditions": [
+          "An active OAuth flow session has been initiated."
+        ],
+        "steps": [
+          "Send a request to our OAuth callback endpoint with either a missing 'state' query parameter or one that doesn't match the session state."
+        ],
+        "expectedResult": "The server rejects the request with a 400 Bad Request or 403 Forbidden, preventing login CSRF.",
+        "acceptanceCriteriaIds": [
+          "AC-004"
+        ],
+        "rationale": "Without state parameter validation, an attacker can trick a user into linking their session to an attacker's account.",
+        "status": "proposed"
+      },
+      {
+        "id": "TC-004",
+        "title": "Unregistered user attempting Google login is shown an account-not-found error",
+        "type": "playwright",
+        "framework": "Playwright",
+        "priority": "high",
+        "preconditions": [
+          "No user exists in our database with the email 'stranger@gmail.com'."
+        ],
+        "steps": [
+          "Navigate to the login page.",
+          "Click 'Log in with Google'.",
+          "Authenticate with 'stranger@gmail.com'.",
+          "Wait for redirect back to our app."
+        ],
+        "expectedResult": "The user is redirected back to the login page and sees a visible error banner indicating that no registered account matches this Google profile.",
+        "acceptanceCriteriaIds": [
+          "AC-004"
+        ],
+        "rationale": "The requirement specifically targets existing registered users ('As a registered user...'). We must ensure we don't accidentally register new users automatically unless that is an explicitly approved feature.",
+        "status": "proposed"
+      },
+      {
+        "id": "TC-005",
+        "title": "Graceful failure handling when Google API returns an error status",
+        "type": "integration",
+        "framework": "Vitest",
+        "priority": "medium",
+        "preconditions": [
+          "Our server is configured to handle Google OAuth callback requests."
+        ],
+        "steps": [
+          "Simulate an error response from Google during the OAuth callback (e.g., error=access_denied)."
+        ],
+        "expectedResult": "The system redirects the user to the login page with a friendly error message, avoiding unhandled exceptions or raw stack traces.",
+        "acceptanceCriteriaIds": [
+          "AC-004"
+        ],
+        "rationale": "Users sometimes click 'Cancel' on Google's permission screen. We need to handle this gracefully instead of throwing a generic 500 error page.",
+        "status": "proposed"
+      }
+    ],
+    "qualityIssues": {
+      "duplicates": [],
+      "incompleteTests": []
+    },
+    "coverage": {
+      "totalCriteria": 4,
+      "coveredCount": 4,
+      "uncoveredCount": 0,
+      "coveragePercentage": 100,
+      "coveredCriteria": [
+        "AC-001",
+        "AC-002",
+        "AC-003",
+        "AC-004"
+      ],
+      "uncoveredCriteria": [],
+      "invalidMappings": []
+    },
+    "validation": {
+      "incompleteTests": [],
+      "incompleteCount": 0
+    },
+    "duplicates": {
+      "duplicates": [],
+      "duplicateCount": 0
+    },
+    "issues": [],
+    "requirement": "As a registered user, I want to log in using Google so that I can access my account without entering a password.",
+    "acceptanceCriteria": "AC-001: User can initiate Google login.\nAC-002: Successful authentication redirects to the dashboard.\nAC-003: Existing users are associated with their account.\nAC-004: Authentication failure displays an error.",
+    "implementationSummary": "Added Google OAuth authentication, callback handling, account lookup and session creation.",
+    "review": {
+      "reviewed": true,
+      "reviewedAt": "2026-08-16T05:47:24.692Z"
+    }
+  },
+  {
+    "analysis": {
+      "userFlows": [
+        {
+          "id": "FLOW-001",
+          "name": "Google Login Happy Path",
+          "description": "An existing registered user logs in via Google and is redirected to the dashboard."
+        },
+        {
+          "id": "FLOW-002",
+          "name": "Failed Google Authentication",
+          "description": "A user attempts to log in but Google returns an error or authentication fails, redirecting the user back with an error message."
+        }
+      ],
+      "assumptions": [
+        {
+          "text": "We match Google accounts to existing app accounts using the email address returned by Google.",
+          "impact": "If our database matches solely on the email string without verifying that Google has actually validated that email address, we open up a critical account takeover vulnerability."
+        },
+        {
+          "text": "Unregistered users trying to log in with Google should be blocked or shown an error rather than having an account auto-created.",
+          "impact": "The requirements specifically state 'As a registered user'. If we automatically create accounts for any Google login, we're violating the current scope and altering our user acquisition metrics."
+        }
+      ],
+      "risks": [
+        {
+          "area": "Account Takeover / Verification",
+          "level": "critical",
+          "reason": "If Google returns 'email_verified: false' in the payload and we still log the user in, anyone can register a dummy Google account with a target's email and hijack their account in our system."
+        },
+        {
+          "area": "CSRF / State Handling",
+          "level": "high",
+          "reason": "If we don't validate the 'state' parameter in the OAuth callback, users are vulnerable to login CSRF attacks where an attacker forces a victim to log into the attacker's account."
+        },
+        {
+          "area": "Third-Party Dependency Failure",
+          "level": "medium",
+          "reason": "If Google's authorization servers are down or slow, our application could hang or show unhelpful raw error dumps to the user."
+        }
+      ],
+      "regressionAreas": [
+        "Standard email/password login flow",
+        "User logout mechanism",
+        "Session expiration and renewal"
+      ]
+    },
+    "tests": [
+      {
+        "id": "TC-001",
+        "title": "Successful login with existing verified email matches account and redirects to dashboard",
+        "type": "playwright",
+        "framework": "Playwright",
+        "priority": "medium",
+        "preconditions": [
+          "A user exists in our database with email 'testuser@gmail.com'.",
+          "Google OAuth sandbox environment is configured."
+        ],
+        "steps": [
+          "Navigate to the login page.",
+          "Click the 'Log in with Google' button.",
+          "Authenticate using the mock Google account 'testuser@gmail.com'.",
+          "Allow redirects to complete."
+        ],
+        "expectedResult": "The user is successfully authenticated, a session is created, and they land on the '/dashboard' route.",
+        "acceptanceCriteriaIds": [
+          "AC-001",
+          "AC-002",
+          "AC-003"
+        ],
+        "rationale": "This is the primary happy path. We need to verify that we successfully link the incoming Google email with our existing record and create a valid local session.",
+        "status": "approved"
+      },
+      {
+        "id": "TC-002",
+        "title": "Reject login if Google email is not verified",
+        "type": "api",
+        "framework": "Vitest / Supertest",
+        "priority": "critical",
+        "preconditions": [
+          "A user exists in our database with email 'unverified@gmail.com'."
+        ],
+        "steps": [
+          "Mock a Google token response containing 'email': 'unverified@gmail.com' and 'email_verified': false.",
+          "Send this token payload to our OAuth callback endpoint."
+        ],
+        "expectedResult": "The server rejects the authentication attempt, does not establish a session, and returns a 401 Unauthorized status with a clear error payload.",
+        "acceptanceCriteriaIds": [
+          "AC-004"
+        ],
+        "rationale": "If we don't check the 'email_verified' flag from Google, anyone can create a free Google account with our users' emails and bypass password security to hijack accounts.",
+        "status": "proposed"
+      },
+      {
+        "id": "TC-003",
+        "title": "OAuth callback rejects request with missing or mismatched state parameter",
+        "type": "api",
+        "framework": "Vitest / Supertest",
+        "priority": "high",
+        "preconditions": [
+          "An active OAuth flow session has been initiated."
+        ],
+        "steps": [
+          "Send a request to our OAuth callback endpoint with either a missing 'state' query parameter or one that doesn't match the session state."
+        ],
+        "expectedResult": "The server rejects the request with a 400 Bad Request or 403 Forbidden, preventing login CSRF.",
+        "acceptanceCriteriaIds": [
+          "AC-004"
+        ],
+        "rationale": "Without state parameter validation, an attacker can trick a user into linking their session to an attacker's account.",
+        "status": "proposed"
+      },
+      {
+        "id": "TC-004",
+        "title": "Unregistered user attempting Google login is shown an account-not-found error",
+        "type": "playwright",
+        "framework": "Playwright",
+        "priority": "high",
+        "preconditions": [
+          "No user exists in our database with the email 'stranger@gmail.com'."
+        ],
+        "steps": [
+          "Navigate to the login page.",
+          "Click 'Log in with Google'.",
+          "Authenticate with 'stranger@gmail.com'.",
+          "Wait for redirect back to our app."
+        ],
+        "expectedResult": "The user is redirected back to the login page and sees a visible error banner indicating that no registered account matches this Google profile.",
+        "acceptanceCriteriaIds": [
+          "AC-004"
+        ],
+        "rationale": "The requirement specifically targets existing registered users ('As a registered user...'). We must ensure we don't accidentally register new users automatically unless that is an explicitly approved feature.",
+        "status": "proposed"
+      },
+      {
+        "id": "TC-005",
+        "title": "Graceful failure handling when Google API returns an error status",
+        "type": "integration",
+        "framework": "Vitest",
+        "priority": "critical",
+        "preconditions": [
+          "Our server is configured to handle Google OAuth callback requests."
+        ],
+        "steps": [
+          "Simulate an error response from Google during the OAuth callback (e.g., error=access_denied)."
+        ],
+        "expectedResult": "The system redirects the user to the login page with a friendly error message, avoiding unhandled exceptions or raw stack traces.",
+        "acceptanceCriteriaIds": [
+          "AC-004"
+        ],
+        "rationale": "Users sometimes click 'Cancel' on Google's permission screen. We need to handle this gracefully instead of throwing a generic 500 error page.",
+        "status": "approved"
+      }
+    ],
+    "qualityIssues": {
+      "duplicates": [],
+      "incompleteTests": []
+    },
+    "coverage": {
+      "totalCriteria": 4,
+      "coveredCount": 4,
+      "uncoveredCount": 0,
+      "coveragePercentage": 100,
+      "coveredCriteria": [
+        "AC-001",
+        "AC-002",
+        "AC-003",
+        "AC-004"
+      ],
+      "uncoveredCriteria": [],
+      "invalidMappings": []
+    },
+    "validation": {
+      "incompleteTests": [],
+      "incompleteCount": 0
+    },
+    "duplicates": {
+      "duplicates": [],
+      "duplicateCount": 0
+    },
+    "issues": [],
+    "requirement": "As a registered user, I want to log in using Google so that I can access my account without entering a password.",
+    "acceptanceCriteria": "AC-001: User can initiate Google login.\nAC-002: Successful authentication redirects to the dashboard.\nAC-003: Existing users are associated with their account.\nAC-004: Authentication failure displays an error.",
+    "implementationSummary": "Added Google OAuth authentication, callback handling, account lookup and session creation.",
+    "review": {
+      "reviewed": true,
+      "reviewedAt": "2026-08-16T05:47:44.828Z"
+    },
+    "id": "QA-1786859244747",
+    "version": 2,
+    "createdAt": "2026-08-16T05:47:24.747Z",
+    "updatedAt": "2026-08-16T05:47:44.839Z"
   }
 ]

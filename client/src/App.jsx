@@ -33,7 +33,7 @@ const [loadingVersions, setLoadingVersions] = useState(false);
       !acceptanceCriteria.trim() ||
       !implementationSummary.trim()
     ) {
-      setError("Please fill in all three fields.");
+      setError("All the Fields are empty!!");
       return;
     }
 
@@ -59,7 +59,7 @@ const [loadingVersions, setLoadingVersions] = useState(false);
 
       if (!response.ok) {
         throw new Error(
-          data.error || "Failed to generate QA plan."
+          data.error || "Unable to generate QA plan."
         );
       }
 
@@ -176,7 +176,7 @@ const handleSavePlan = async () => {
 
     if (!response.ok) {
       throw new Error(
-        data.error || "Failed to save QA plan."
+        data.error || "Unable to save this QA plan."
       );
     }
 
@@ -186,7 +186,7 @@ const handleSavePlan = async () => {
     setSavedVersion(savedPlan.version);
 
     setSaveMessage(
-      `QA plan saved successfully as ${savedPlan.id}, version ${savedPlan.version}.`
+      `QA plan is saved successfully as ${savedPlan.id}, version ${savedPlan.version}.`
     );
 
   } catch (err) {
@@ -210,7 +210,7 @@ const handleLoadLatestPlan = async () => {
 
     if (!response.ok) {
       throw new Error(
-        data.error || "Failed to load saved QA plan."
+        data.error || "Unable to load the saved QA plan."
       );
     }
 
@@ -261,7 +261,7 @@ const handleLoadVersionHistory = async () => {
 
     if (!response.ok) {
       throw new Error(
-        data.error || "Failed to load version history."
+        data.error || "Unable to load version history."
       );
     }
 
@@ -277,13 +277,12 @@ const handleLoadVersionHistory = async () => {
     <div className="app">
       <header className="header">
         <div>
-          <p className="eyebrow">AI-POWERED QA</p>
+          <p className="eyebrow">AI agent QA</p>
 
-          <h1>QA Planning Assistant</h1>
+          <h1>QA Planning AI assistant</h1>
 
           <p className="subtitle">
-            Turn product requirements into structured,
-            reviewable test plans.
+            Converting product requirements into structured, reviewable test plans.            
           </p>
         </div>
       </header>
@@ -388,8 +387,7 @@ AC-004: Authentication failure displays an error.`}
       <h2>QA Analysis Results</h2>
 
       <p>
-        Review the proposed tests and validation results
-        before approving anything.
+        Review the proposed tests and validation results prior to approving anything.
       </p>
     </div>
 
@@ -416,7 +414,7 @@ AC-004: Authentication failure displays an error.`}
         </strong>
 
         <p>
-          Tests missing required information
+          Required information missing from proposed tests
         </p>
       </div>
 
